@@ -10,7 +10,7 @@ readline(const char *prompt)
 	int i, c, echoing;
 
 	if (prompt != NULL)
-		cprintf("%s", prompt);
+		cprintf("%s", prompt); // 输出$>
 
 	i = 0;
 	echoing = iscons(0);
@@ -19,7 +19,7 @@ readline(const char *prompt)
 		if (c < 0) {
 			cprintf("read error: %e\n", c);
 			return NULL;
-		} else if ((c == '\b' || c == '\x7f') && i > 0) {
+		} else if ((c == '\b' || c == '\x7f') && i > 0) { //删除
 			if (echoing)
 				cputchar('\b');
 			i--;

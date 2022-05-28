@@ -3,6 +3,8 @@
 
 #define ELF_MAGIC 0x464C457FU	/* "\x7FELF" in little endian */
 
+// ELFHDR
+// readelf -h
 struct Elf {
 	uint32_t e_magic;	// must equal ELF_MAGIC
 	uint8_t e_elf[12];
@@ -11,13 +13,13 @@ struct Elf {
 	uint32_t e_version;
 	uint32_t e_entry;
 	uint32_t e_phoff;
-	uint32_t e_shoff;
+	uint32_t e_shoff;	// section headers 的起始位置
 	uint32_t e_flags;
-	uint16_t e_ehsize;
+	uint16_t e_ehsize;	// ELF header 的长度
 	uint16_t e_phentsize;
 	uint16_t e_phnum;
-	uint16_t e_shentsize;
-	uint16_t e_shnum;
+	uint16_t e_shentsize;	// section headers 表项的大小
+	uint16_t e_shnum;	// section headers 中表项的数目
 	uint16_t e_shstrndx;
 };
 
@@ -32,13 +34,14 @@ struct Proghdr {
 	uint32_t p_align;
 };
 
+// readelf -S
 struct Secthdr {
 	uint32_t sh_name;
 	uint32_t sh_type;
 	uint32_t sh_flags;
 	uint32_t sh_addr;
-	uint32_t sh_offset;
-	uint32_t sh_size;
+	uint32_t sh_offset;	// section 的起始位置
+	uint32_t sh_size;	// section 的大小
 	uint32_t sh_link;
 	uint32_t sh_info;
 	uint32_t sh_addralign;

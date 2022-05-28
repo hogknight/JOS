@@ -24,6 +24,7 @@ struct Command {
 static struct Command commands[] = {
 	{ "help", "Display this list of commands", mon_help },
 	{ "kerninfo", "Display information about the kernel", mon_kerninfo },
+	{ "backtrace", "Display the backtrace of the stack", mon_backtrace },
 };
 
 /***** Implementations of basic kernel monitor commands *****/
@@ -57,7 +58,29 @@ mon_kerninfo(int argc, char **argv, struct Trapframe *tf)
 int
 mon_backtrace(int argc, char **argv, struct Trapframe *tf)
 {
-	// Your code here.
+	uint32_t ebp = 0;
+	uint32_t eip = 0;
+	uint32_t args[5] = {0};
+	struct Eipdebuginfo eip_info;
+
+	cprintf("Stack backtrace:\n");
+	ebp = read_ebp();
+	while (ebp != 0){
+		eip = *((uint32_t *)(ebp + 4));
+		debuginfo_eip(eip, &eip_info);
+		args[0] = *((uint32_t *)(ebp + 8));
+		args[1] = *((uint32_t *)(ebp + 12));
+		args[2] = *((uint32_t *)(ebp + 16));
+		args[3] = *((uint32_t *)(ebp + 20));
+		args[4] = *((uint32_t *)(ebp + 24));
+		cprintf("  ebp %08x  eip %08x", ebp, eip);
+		cprintf("  args %08x %08x %08x %08x %08x\n", args[0],
+			args[1], args[2], args[3], args[4]);
+		cprintf("       %s: %s\n", eip_info.eip_file, 
+			eip_info.eip_fn_name);
+		ebp = *(uint32_t *)ebp;
+	}
+
 	return 0;
 }
 
@@ -117,7 +140,7 @@ monitor(struct Trapframe *tf)
 
 
 	while (1) {
-		buf = readline("K> ");
+		buf = readline("$> ");
 		if (buf != NULL)
 			if (runcmd(buf, tf) < 0)
 				break;

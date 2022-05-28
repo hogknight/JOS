@@ -1,6 +1,8 @@
 #include <inc/mmu.h>
 #include <inc/memlayout.h>
 
+// typedef uint32_t pte_t;
+// page table entries per page table
 pte_t entry_pgtable[NPTENTRIES];
 
 // The entry.S page directory maps the first 4MB of physical memory
@@ -12,8 +14,8 @@ pte_t entry_pgtable[NPTENTRIES];
 // region is critical for a few instructions in entry.S and then we
 // never use it again.
 //
-// Page directories (and page tables), must start on a page boundary,
-// hence the "__aligned__" attribute.  Also, because of restrictions
+// Page directories (and page tables), must start on a page boundary(边界),
+// hence the "__aligned__" attribute.  Also, because of restrictions(限制)
 // related to linking and static initializers, we use "x + PTE_P"
 // here, rather than the more standard "x | PTE_P".  Everywhere else
 // you should use "|" to combine flags.
